@@ -1,0 +1,16 @@
+{
+    "name": "coupage",
+    "author": "Rostislav Hristov <rostislav@asual.com>",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "build": "lerna run build",
+        "clean": "lerna clean",
+        "package": "lerna run package",
+        "postinstall": "lerna bootstrap --hoist",
+        "publish": "lerna publish"
+    },
+    "devDependencies": {
+        "lerna": "^3.22.1"
+    }
+}

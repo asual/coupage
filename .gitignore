@@ -1,0 +1,17 @@
+# npm
+node_modules
+npm-debug.log*
+
+# build
+analysis
+dist
+coverage
+
+# javascript
+*.js
+
+# misc
+.DS_Store
+
+# pack
+*.tgz

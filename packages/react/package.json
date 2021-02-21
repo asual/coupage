@@ -1,0 +1,56 @@
+{
+    "name": "@coupage/react",
+    "description": "An implementation of the Coupage toolkit that aims to simplify the creation of extensible React applications.",
+    "keywords": [
+        "coupage",
+        "extensibility",
+        "extension",
+        "micro-frontend",
+        "react"
+    ],
+    "version": "0.0.0",
+    "author": "Rostislav Hristov <rostislav@asual.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/asual/coupage.git",
+        "directory": "packages/react"
+    },
+    "bugs": {
+        "url": "https://github.com/asual/coupage/issues"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "rm -rf dist && tsc",
+        "package": "npm pack",
+        "prepack": "npm run build"
+    },
+    "dependencies": {
+        "@coupage/core": "^0.1.0",
+        "react": "^17.0.1",
+        "react-intl": "^5.12.3"
+    },
+    "devDependencies": {
+        "@testing-library/react": "^11.2.5",
+        "@testing-library/react-hooks": "^5.0.3",
+        "@types/react": "^17.0.2",
+        "@types/react-router-dom": "^5.1.7",
+        "@typescript-eslint/eslint-plugin": "^4.15.0",
+        "@typescript-eslint/parser": "^4.15.0",
+        "eslint": "^7.20.0",
+        "eslint-config-prettier": "^7.2.0",
+        "eslint-plugin-header": "^3.1.1",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-prettier": "^3.3.1",
+        "eslint-plugin-react": "^7.22.0",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "eslint-plugin-testing-library": "^3.10.1",
+        "prettier": "^2.2.1",
+        "typescript": "^4.1.5"
+    },
+    "peerDependencies": {
+        "react": "^17.0.1",
+        "react-intl": "^5.12.3"
+    }
+}
