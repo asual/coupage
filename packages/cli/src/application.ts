@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ class ForkTsCheckerESLintWarningWebpackPlugin implements WebpackPluginInstance {
     }
 }
 
-export default () => {
+export default function () {
     const definition = "package.json";
     const dependencies = Object.keys(readFile(definition).dependencies ?? {});
     const extensionPath = process.env.EXTENSION_PATH ?? "";
@@ -83,6 +83,7 @@ export default () => {
         devServer: {
             clientLogLevel: "silent",
             historyApiFallback: true,
+            host: "0.0.0.0",
             port: 3000,
             publicPath: "/",
             quiet: true,
@@ -324,4 +325,4 @@ export default () => {
         default:
             return merge(commonConfig, webpackConfig);
     }
-};
+}

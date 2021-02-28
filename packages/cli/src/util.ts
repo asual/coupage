@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,11 @@ import { createHash } from "crypto";
 import { readFileSync } from "fs";
 import { basename } from "path";
 
-export const interpolateName = (path: string) => {
+export function interpolateName(path: string) {
     const hash = createHash("md4").update(readFileSync(path)).digest("hex").substr(0, 8);
     return basename(path).replace(".", "." + hash + ".");
-};
+}
 
-export const readFile = (path: string) => JSON.parse(readFileSync(path).toString());
+export function readFile(path: string) {
+    return JSON.parse(readFileSync(path).toString());
+}

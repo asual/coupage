@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ import { resolve } from "path";
 import { sync } from "glob";
 import tri, { Message } from "typescript-react-intl";
 
-export default () => {
+export default function () {
     const value = sync("src/**/!(*.test).{ts,tsx}")
         .reduce((acc, val) => [...acc, ...tri(readFileSync(val).toString())], [] as Message[])
         .sort((a, b) => {
@@ -46,4 +46,4 @@ export default () => {
         mkdirSync(outDir);
     }
     writeFileSync(resolve(outDir, "en.json"), JSON.stringify(value, null, 4) + EOL);
-};
+}

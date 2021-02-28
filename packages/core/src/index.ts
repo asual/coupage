@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,29 +89,25 @@ export interface ExtensionResources {
     styles?: Record<string, string>;
 }
 
-export type Resources = Record<string, ExtensionResources>;
-
-export const getExtensionMessages = (extensionName: string, locale: string) => {
-    if (Object.keys(cache.messages).length === 0) {
-        return;
+export function getExtensionMessages(extensionName: string, locale: string): Record<string, string> | void {
+    if (Object.keys(cache.messages).length !== 0) {
+        return cache.messages[extensionName] && cache.messages[extensionName][locale];
     }
-    return cache.messages[extensionName] && cache.messages[extensionName][locale];
-};
+}
 
-export const getExtensionDefinition = <T = unknown>(extensionName: string) => {
-    if (Object.keys(cache.definitions).length === 0) {
-        return;
+export function getExtensionDefinition<T = unknown>(extensionName: string): ExtensionModule<T> | void {
+    if (Object.keys(cache.definitions).length !== 0) {
+        return cache.definitions[extensionName] as ExtensionModule<T>;
     }
-    return cache.definitions[extensionName] as ExtensionModule<T>;
-};
+}
 
-export const loadExtensionPoint = <T = unknown>(
+export function loadExtensionPoint<T = unknown>(
     extensionName: string,
     extensionPointName: string,
     extensionResources: ExtensionResources,
     dependencies: Record<string, unknown>,
     nonce?: string
-) => {
+): Promise<ExtensionModule<T>> {
     if (process.env.EXTENSION_NAME) {
         extensionName = extensionName || process.env.EXTENSION_NAME;
     }
@@ -126,22 +122,22 @@ export const loadExtensionPoint = <T = unknown>(
     ).then((script) => {
         const extensionPoint = {
             default: script.default[extensionPointName],
-        } as ExtensionModule<T>;
+        };
         cache.points[extensionName] = {
             ...cache.points[extensionName],
             [extensionPointName]: extensionPoint,
         };
         return extensionPoint;
     });
-};
+}
 
-export const loadResources = (
-    resources: Resources,
+export function loadResources(
+    resources: Record<string, ExtensionResources>,
     dependencies: Record<string, unknown>,
     locale: string,
     nonce?: string
-) =>
-    Promise.all(
+): Promise<void> {
+    return Promise.all(
         Object.keys(resources).map((extensionName) => {
             if (getExtensionDefinition(extensionName)) {
                 return Promise.resolve();
@@ -162,10 +158,13 @@ export const loadResources = (
                 };
             });
         })
-    ).then(() => void 0);
+    ).then(() => {
+        void 0;
+    });
+}
 
-export const preloadResources = (resources: Resources, locale: string, nonce?: string) => {
-    Object.keys(resources).map((extensionName) => {
+export function preloadResources(resources: Record<string, ExtensionResources>, locale: string, nonce?: string): void {
+    Object.keys(resources).forEach((extensionName) => {
         const extensionResources = resources[extensionName];
         const definition = document.createElement("link");
         definition.setAttribute("as", "script");
@@ -187,20 +186,20 @@ export const preloadResources = (resources: Resources, locale: string, nonce?: s
             document.head.appendChild(messages);
         }
     });
-};
+}
 
-export function createExtensionDefinition<T>(definitionTemplate: T, definition: T) {
+export function createExtensionDefinition<T>(definitionTemplate: T, definition: T): T {
     return {
         ...definitionTemplate,
         ...definition,
     };
 }
 
-export function createExtensionPointDefinition<T>(value = {} as T) {
-    return value;
+export function createExtensionPointDefinition<T>(): T {
+    return {} as T;
 }
 
-export function extractExtensionPointNames<T>(definition: T) {
+export function extractExtensionPointNames<T>(definition: T): Record<keyof T, string> {
     return Object.keys(definition).reduce(
         (acc, val) => ({
             ...acc,
