@@ -9,7 +9,7 @@
         "micro-frontend",
         "webpack"
     ],
-    "version": "0.1.0",
+    "version": "0.1.1",
     "author": "Rostislav Hristov <rostislav.hristov@gmail.com>",
     "license": "MIT",
     "repository": {
