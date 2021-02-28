@@ -199,8 +199,8 @@ export function createExtensionPointDefinition<T>(): T {
     return {} as T;
 }
 
-export function extractExtensionPointNames<T>(definition: T): Record<keyof T, string> {
-    return Object.keys(definition).reduce(
+export function extractExtensionPointNames<T>(definitionTemplate: T): Record<keyof T, string> {
+    return Object.keys(definitionTemplate).reduce(
         (acc, val) => ({
             ...acc,
             [val]: val,
