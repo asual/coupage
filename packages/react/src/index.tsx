@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,19 @@
 
 import {
     ExtensionModule,
+    ExtensionResources,
     getExtensionDefinition,
     getExtensionMessages,
     loadExtensionPoint,
     loadResources,
-    Resources,
 } from "@coupage/core";
-import {
-    ComponentType,
-    createContext,
-    createElement,
-    Fragment,
-    lazy,
-    ReactElement,
-    ReactNode,
-    Suspense,
-    useContext,
-} from "react";
+import { ComponentType, createContext, createElement, Fragment, lazy, ReactElement, Suspense, useContext } from "react";
 import { IntlProvider, useIntl } from "react-intl";
 
 interface ExtensionContext {
     dependencies: Record<string, unknown>;
     nonce?: string;
-    resources: Resources;
+    resources: Record<string, ExtensionResources>;
 }
 
 const extensionContext = createContext<ExtensionContext>({
@@ -52,8 +42,84 @@ const extensionContext = createContext<ExtensionContext>({
     resources: {},
 });
 
-interface ExtensionProviderProps extends ExtensionContext {
-    children: ReactNode | ReactNode[];
+const extensionPointContext = createContext<string>("");
+
+export interface ExtensionComponentProps {
+    fallback?: ReactElement;
+    name: string;
+}
+
+export function ExtensionComponent({ fallback = <Fragment />, name }: ExtensionComponentProps) {
+    const { dependencies, nonce, resources } = useContext(extensionContext);
+    const extensionName = useContext(extensionPointContext);
+    const extensionPointName = name;
+    const extensionResources = resources[extensionName];
+    return (
+        <Suspense fallback={fallback}>
+            {createElement(
+                lazy(() =>
+                    loadExtensionPoint<ComponentType>(
+                        extensionName,
+                        extensionPointName,
+                        extensionResources,
+                        dependencies,
+                        nonce
+                    )
+                )
+            )}
+        </Suspense>
+    );
+}
+
+export interface ExtensionPointProps<T> {
+    children: (props: T) => ReactElement;
+    fallback?: ReactElement;
+    filter?: (definition: T) => boolean;
+    name: string;
+}
+
+export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, name }: ExtensionPointProps<T>) {
+    const { locale } = useIntl();
+    const { resources } = useContext(extensionContext);
+    const definitions = Object.keys(resources).reduce((acc: Record<string, T>, val) => {
+        const definition = getExtensionDefinition<Record<string, T>>(val);
+        if (!definition || !definition?.default[name]) {
+            return acc;
+        }
+        if (filter && !filter(definition.default[name])) {
+            return acc;
+        }
+        return {
+            ...acc,
+            [val]: definition.default[name],
+        };
+    }, {});
+    const keys = Object.keys(definitions);
+    if (keys.length === 0) {
+        return fallback;
+    }
+    return (
+        <Fragment>
+            {keys.map((key) => (
+                <IntlProvider key={key} locale={locale} messages={getExtensionMessages(key, locale) || {}}>
+                    {createElement(
+                        extensionPointContext.Provider,
+                        {
+                            value: key,
+                        },
+                        children(definitions[key])
+                    )}
+                </IntlProvider>
+            ))}
+        </Fragment>
+    );
+}
+
+export interface ExtensionProviderProps {
+    children: ReactElement | ReactElement[];
+    dependencies: Record<string, unknown>;
+    nonce?: string;
+    resources: Record<string, ExtensionResources>;
 }
 
 export function ExtensionProvider({ children, dependencies, nonce, resources }: ExtensionProviderProps) {
@@ -90,78 +156,5 @@ export function ExtensionProvider({ children, dependencies, nonce, resources }: 
                 }
             )}
         </Suspense>
-    );
-}
-
-const extensionPointContext = createContext<string>("");
-
-interface ExtensionComponentProps {
-    fallback?: ReactElement;
-    name: string;
-}
-
-export function ExtensionComponent({ fallback = <Fragment />, name }: ExtensionComponentProps) {
-    const { dependencies, nonce, resources } = useContext(extensionContext);
-    const extensionName = useContext(extensionPointContext);
-    const extensionPointName = name;
-    const extensionResources = resources[extensionName];
-    return (
-        <Suspense fallback={fallback}>
-            {createElement(
-                lazy(() =>
-                    loadExtensionPoint<ComponentType>(
-                        extensionName,
-                        extensionPointName,
-                        extensionResources,
-                        dependencies,
-                        nonce
-                    )
-                )
-            )}
-        </Suspense>
-    );
-}
-
-interface ExtensionPointProps<T> {
-    children: (props: T) => ReactElement;
-    fallback?: ReactElement;
-    filter?: (definition: T) => boolean;
-    name: string;
-}
-
-export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, name }: ExtensionPointProps<T>) {
-    const { locale } = useIntl();
-    const { resources } = useContext(extensionContext);
-    const definitions = Object.keys(resources).reduce((acc: Record<string, T>, val) => {
-        const definition = getExtensionDefinition<Record<string, T>>(val);
-        if (!definition?.default[name]) {
-            return acc;
-        }
-        if (filter && !filter(definition.default[name])) {
-            return acc;
-        }
-        return {
-            ...acc,
-            [val]: definition.default[name],
-        };
-    }, {});
-    const keys = Object.keys(definitions);
-    if (keys.length === 0) {
-        return fallback;
-    }
-    return (
-        <Fragment>
-            {keys.map((key) => (
-                <IntlProvider key={key} locale={locale} messages={getExtensionMessages(key, locale) || {}}>
-                    {createElement(
-                        extensionPointContext.Provider,
-                        {
-                            value: key,
-                        },
-                        children(definitions[key])
-                    )}
-                </IntlProvider>
-            ))}
-        </Fragment>
     );
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Rostislav Hristov
+ * Copyright (c) 2020-2021 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import analyzer from "webpack-bundle-analyzer";
 
 import { interpolateName } from "./util";
 
-export default () => {
+export default function () {
     const intlMap: Record<string, string> = sync("intl/*.json").reduce(
         (acc, val) => ({
             ...acc,
@@ -145,4 +145,4 @@ export default () => {
         },
     };
     return productionConfig;
-};
+}
