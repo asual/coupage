@@ -64,14 +64,14 @@ class ForkTsCheckerESLintWarningWebpackPlugin implements WebpackPluginInstance {
     }
 }
 
-export default function () {
+export default function (applicationPath: string, extensionPath?: string) {
     const definition = "package.json";
-    const dependencies = Object.keys(readFile(definition).dependencies ?? {});
-    const extensionPath = process.env.EXTENSION_PATH ?? "";
-    const extensionName = (extensionPath && readFile(join(extensionPath, definition)).name) ?? "";
-    const webpackConfig = require(resolve("webpack.config")).default;
+    const extensionName = (extensionPath && readFile(resolve(extensionPath, definition)).name) ?? "";
+    const webpackConfig = require(resolve(applicationPath, "webpack.config")).default;
 
-    const intlMap: Record<string, string> = sync("intl/*.json").reduce(
+    const intlMap = sync("intl/*.json", {
+        cwd: applicationPath,
+    }).reduce<Record<string, string>>(
         (acc, val) => ({
             ...acc,
             [basename(val, ".json")]: val,
@@ -80,6 +80,7 @@ export default function () {
     );
 
     const commonConfig: Configuration = {
+        context: applicationPath,
         devServer: {
             clientLogLevel: "silent",
             historyApiFallback: true,
@@ -88,7 +89,9 @@ export default function () {
             publicPath: "/",
             quiet: true,
         },
-        entry: resolve(...sync("src/index.{ts,tsx}")),
+        entry: sync("index.{ts,tsx}", {
+            cwd: resolve(applicationPath, "src"),
+        })[0],
         optimization: {
             splitChunks: {
                 cacheGroups: {
@@ -99,7 +102,7 @@ export default function () {
         },
         output: {
             globalObject: "self",
-            path: resolve("dist"),
+            path: resolve(applicationPath, "dist"),
             publicPath: "/",
         },
         plugins: [
@@ -116,7 +119,6 @@ export default function () {
                 ],
             }),
             new EnvironmentPlugin({
-                DEPENDENCIES: dependencies,
                 EXTENSION_NAME: extensionName,
                 NODE_ENV: process.env.NODE_ENV,
             }),
@@ -135,6 +137,9 @@ export default function () {
             }),
         ],
         resolve: {
+            alias: {
+                ...(extensionName && extensionPath ? { [extensionName]: resolve(extensionPath, "src") } : {}),
+            },
             extensions: [".js", ".json", ".ts", ".tsx"],
             modules: ["node_modules", "src"],
         },
@@ -181,7 +186,7 @@ export default function () {
             new CopyWebpackPlugin({
                 patterns: [
                     ...Object.values(intlMap).map((intl) => ({
-                        from: intl,
+                        from: resolve(applicationPath, intl),
                         to: join("application", "messages", basename(intl)),
                     })),
                 ],
@@ -196,27 +201,26 @@ export default function () {
             }),
             new ForkTsCheckerWebpackPlugin({
                 eslint: {
-                    files: join(extensionPath, "src/**/*.{ts,tsx}"),
+                    files: join(extensionPath ?? applicationPath, "src/**/*.{ts,tsx}"),
                 },
                 typescript: {
-                    configFile: join(extensionPath, "tsconfig.json"),
+                    configFile: join(extensionPath ?? applicationPath, "tsconfig.json"),
                 },
             }),
             new ForkTsCheckerESLintWarningWebpackPlugin(),
             new HtmlWebpackPlugin({
-                favicon: "public/favicon.ico",
+                favicon: resolve(applicationPath, "public", "favicon.ico"),
                 filename: "index.html",
                 inject: true,
-                template: "public/index.html",
+                template: resolve(applicationPath, "public", "index.html"),
             }),
             new NormalModuleReplacementPlugin(/.*/, (resource) => {
                 const nodeModules = "node_modules";
                 if (resource.createData.resource?.includes(nodeModules)) {
-                    const localResourcePath = resolve(
-                        join(
-                            resolve(nodeModules),
-                            resource.createData.resource?.split(nodeModules).slice(1).join(nodeModules)
-                        )
+                    const localResourcePath = join(
+                        applicationPath,
+                        nodeModules,
+                        resource.createData.resource?.split(nodeModules).slice(1).join(nodeModules)
                     );
                     if (existsSync(localResourcePath)) {
                         resource.createData.resource = localResourcePath;
@@ -225,11 +229,6 @@ export default function () {
             }),
             new ReactRefreshWebpackPlugin(),
         ],
-        resolve: {
-            alias: {
-                ...(extensionName && extensionPath ? { [extensionName]: resolve(extensionPath, "src") } : {}),
-            },
-        },
     };
 
     const productionConfig: Configuration = {

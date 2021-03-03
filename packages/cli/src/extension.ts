@@ -34,7 +34,7 @@ import analyzer from "webpack-bundle-analyzer";
 import { interpolateName } from "./util";
 
 export default function () {
-    const intlMap: Record<string, string> = sync("intl/*.json").reduce(
+    const intlMap = sync("intl/*.json").reduce<Record<string, string>>(
         (acc, val) => ({
             ...acc,
             [basename(val, ".json")]: val,

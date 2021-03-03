@@ -22,6 +22,8 @@
 
 /* eslint-disable no-console */
 
+import { resolve } from "path";
+
 import startDevServer from "@webpack-cli/serve/lib/startDevServer";
 import commandLineArgs from "command-line-args";
 import webpack, { Stats } from "webpack";
@@ -31,7 +33,7 @@ import extension from "./extension";
 import intl from "./intl";
 import { readFile } from "./util";
 
-const commandOptions = commandLineArgs(
+const command = commandLineArgs(
     [
         {
             defaultOption: true,
@@ -43,31 +45,45 @@ const commandOptions = commandLineArgs(
     }
 );
 
-switch (commandOptions.name) {
+const isExtension = readFile("package.json").peerDependencies;
+
+switch (command.name) {
     case "build":
-        webpack(
-            !readFile("package.json").peerDependencies ? application() : extension(),
-            (error?: Error, stats?: Stats) => {
-                if (error) {
-                    console.error(error.message);
+        webpack(isExtension ? extension() : application(resolve()), (error?: Error, stats?: Stats) => {
+            if (error) {
+                console.error(error.message);
+                process.exit(1);
+            }
+            if (stats) {
+                if (stats.hasErrors()) {
+                    const errors = stats.toJson().errors as Error[];
+                    errors.forEach(({ message }) => {
+                        console.error(message);
+                    });
                     process.exit(1);
                 }
-                if (stats) {
-                    if (stats.hasErrors()) {
-                        const errors = stats.toJson().errors as Error[];
-                        errors.forEach(({ message }) => {
-                            console.error(message);
-                        });
-                        process.exit(1);
-                    }
-                }
             }
-        );
+        });
         break;
     case "intl":
         intl();
         break;
-    case "start":
-        startDevServer(webpack(application()), [], [], console);
+    case "serve": {
+        const args = commandLineArgs(
+            [
+                {
+                    alias: "a",
+                    name: "application",
+                    type: String,
+                },
+            ],
+            { argv: command._unknown || [] }
+        );
+        if (isExtension) {
+            startDevServer(webpack(application(resolve(args.application), resolve())), [], [], console);
+        } else {
+            startDevServer(webpack(application(resolve())), [], [], console);
+        }
         break;
+    }
 }

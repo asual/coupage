@@ -1,3 +1,7 @@
+## 0.1.2 (Mar 3, 2021)
+
+-   Improve the CLI support for extension development
+
 ## 0.1.1 (Feb 28, 2021)
 
 -   Improve documentation
