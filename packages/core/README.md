@@ -1,7 +1,5 @@
 # @coupage/core
 
-## Overview
-
 The Coupage Core package provides a set of APIs that enable type-safe extension definition and flexible resource
 loading. The implementation handles both optimal development experience as well as optimized production performance.
 

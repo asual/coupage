@@ -1,7 +1,5 @@
 # @coupage/cli
 
-## Overview
-
 The Coupage CLI package provides a wrapper around a set of predefined [Webpack](https://github.com/webpack/webpack)
 configurations that are suitable for application and extension development. It enables features and plugins similar to
 the ones used by [react-scripts](https://github.com/facebook/create-react-app/tree/master/packages/react-scripts) but
@@ -24,6 +22,6 @@ Produces a production build of the package, bundle analysis and code coverage re
 Extracts the default copy out of [react-intl](https://github.com/formatjs/formatjs/tree/main/packages/react-intl)
 message definitions and stores the result in `intl/en.json`.
 
-### `coupage start`
+### `coupage serve`
 
 Launches a local server that handles extension development in the context of the host application.

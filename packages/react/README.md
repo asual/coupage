@@ -1,7 +1,5 @@
 # @coupage/react
 
-## Overview
-
 The Coupage package for React provides a small set of components that enable extension integration capabilities.
 
 ## Components

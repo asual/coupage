@@ -1,7 +1,5 @@
 # <img height="40" src="coupage.svg" valign="text-bottom"> Coupage
 
-## Overview
-
 Coupage (/ku.paʒ/) is a tiny toolkit that aims to simplify the creation of extensible browser-based applications. It
 implements a mechanism that loads extensions inside a host application and takes care of shared dependencies.
 
@@ -46,8 +44,8 @@ production environments.
 
 ### [@coupage/cli](https://github.com/asual/coupage/tree/master/packages/cli)
 
-A wrapper around a custom Webpack configuration that simplifies the build and internationalization needs of a typical
-Coupage project.
+A wrapper around a custom [Webpack](https://github.com/webpack/webpack) configuration that simplifies the build and
+internationalization needs of a typical Coupage project.
 
 ### [@coupage/react](https://github.com/asual/coupage/tree/master/packages/react)
 
