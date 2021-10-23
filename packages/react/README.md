@@ -24,6 +24,7 @@ function ExtensionPoint<T>(props: {
     fallback?: ReactElement;
     filter?: (definition: T) => boolean;
     name: string;
+    sort?: (a: T, b: T) => number;
 });
 ```
 

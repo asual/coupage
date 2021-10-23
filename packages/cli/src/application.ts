@@ -23,7 +23,6 @@
 import { existsSync } from "fs";
 import { basename, join, resolve } from "path";
 
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
@@ -160,14 +159,9 @@ export default function (applicationPath: string, extensionPath?: string) {
                     test: /\.tsx?$/,
                     use: [
                         {
-                            loader: "babel-loader",
-                            options: { plugins: ["react-refresh/babel"] },
-                        },
-                        {
                             loader: "ts-loader",
                             options: {
                                 compilerOptions: {
-                                    jsx: "react-jsxdev",
                                     module: "es2020",
                                     sourceMap: true,
                                 },
@@ -227,7 +221,6 @@ export default function (applicationPath: string, extensionPath?: string) {
                     }
                 }
             }),
-            new ReactRefreshWebpackPlugin(),
         ],
     };
 
