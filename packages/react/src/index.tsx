@@ -28,7 +28,18 @@ import {
     loadExtensionPoint,
     loadResources,
 } from "@coupage/core";
-import { ComponentType, createContext, createElement, Fragment, lazy, ReactElement, Suspense, useContext } from "react";
+import {
+    ComponentType,
+    createContext,
+    createElement,
+    Fragment,
+    FunctionComponent,
+    lazy,
+    ProviderProps,
+    ReactElement,
+    Suspense,
+    useContext,
+} from "react";
 import { IntlProvider, useIntl } from "react-intl";
 
 interface ExtensionContext {
@@ -128,9 +139,9 @@ export function ExtensionProvider({ children, dependencies, nonce, resources }: 
     return (
         <Suspense fallback={<Fragment />}>
             {createElement(
-                lazy(() =>
+                lazy<FunctionComponent<ProviderProps<ExtensionContext>>>(() =>
                     loadResources(resources, dependencies, locale, nonce).then<
-                        ExtensionModule<() => ReactElement<React.ProviderProps<ExtensionContext>>>
+                        ExtensionModule<() => ReactElement<ProviderProps<ExtensionContext>>>
                     >(() => ({
                         default: function Provider() {
                             return createElement(

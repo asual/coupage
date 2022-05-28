@@ -39,13 +39,13 @@ Coupage consists of several packages that contribute to different aspects of the
 
 ### [@coupage/core](https://github.com/asual/coupage/tree/master/packages/core)
 
-A zero-dependency extension loading implementation that takes care of resource handling in both development and
+A zero-dependency extension loading implementation that provides optimized resource handling in both development and
 production environments.
 
 ### [@coupage/cli](https://github.com/asual/coupage/tree/master/packages/cli)
 
-A wrapper around a custom [Webpack](https://github.com/webpack/webpack) configuration that simplifies the build and
-internationalization needs of a typical Coupage project.
+A wrapper around a customized [Webpack](https://github.com/webpack/webpack) configuration that simplifies the typical
+development needs of a Coupage project.
 
 ### [@coupage/react](https://github.com/asual/coupage/tree/master/packages/react)
 

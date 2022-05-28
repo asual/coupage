@@ -1,6 +1,0 @@
-.eslintrc
-.prettierrc
-node_modules
-src
-tsconfig.json
-*.tgz

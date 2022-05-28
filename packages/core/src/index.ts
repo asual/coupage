@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Rostislav Hristov
+ * Copyright (c) 2020-2022 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -114,11 +114,12 @@ export function loadExtensionPoint<T = unknown>(
     if (cache.points[extensionName] && cache.points[extensionName][extensionPointName]) {
         return Promise.resolve(cache.points[extensionName][extensionPointName] as ExtensionModule<T>);
     }
-    return (process.env.NODE_ENV === "development" &&
-    process.env.EXTENSION_NAME &&
-    process.env.EXTENSION_NAME === extensionName
-        ? import(`${process.env.EXTENSION_NAME}/index`)
-        : loadScript(extensionName, "main", extensionResources, dependencies, nonce)
+    return (
+        process.env.NODE_ENV === "development" &&
+        process.env.EXTENSION_NAME &&
+        process.env.EXTENSION_NAME === extensionName
+            ? import(`${process.env.EXTENSION_NAME}/index`)
+            : loadScript(extensionName, "main", extensionResources, dependencies, nonce)
     ).then((script) => {
         const extensionPoint = {
             default: script.default[extensionPointName],
@@ -164,28 +165,37 @@ export function loadResources(
 }
 
 export function preloadResources(resources: Record<string, ExtensionResources>, locale: string, nonce?: string): void {
-    Object.keys(resources).forEach((extensionName) => {
-        const extensionResources = resources[extensionName];
-        const definition = document.createElement("link");
-        definition.setAttribute("as", "script");
-        definition.setAttribute("href", extensionResources.scripts.definition);
-        if (nonce) {
-            definition.setAttribute("nonce", nonce);
-        }
-        definition.setAttribute("rel", "preload");
-        document.head.appendChild(definition);
-        if (extensionResources.messages) {
-            const messages = document.createElement("link");
-            messages.setAttribute("as", "fetch");
-            messages.setAttribute("crossorigin", "anonymous");
-            messages.setAttribute("href", extensionResources.messages[locale]);
+    Object.keys(resources)
+        .filter(
+            (extensionName) =>
+                !(
+                    process.env.NODE_ENV === "development" &&
+                    process.env.EXTENSION_NAME &&
+                    process.env.EXTENSION_NAME === extensionName
+                )
+        )
+        .forEach((extensionName) => {
+            const extensionResources = resources[extensionName];
+            const definition = document.createElement("link");
+            definition.setAttribute("as", "script");
+            definition.setAttribute("href", extensionResources.scripts.definition);
             if (nonce) {
-                messages.setAttribute("nonce", nonce);
+                definition.setAttribute("nonce", nonce);
             }
-            messages.setAttribute("rel", "preload");
-            document.head.appendChild(messages);
-        }
-    });
+            definition.setAttribute("rel", "preload");
+            document.head.appendChild(definition);
+            if (extensionResources.messages) {
+                const messages = document.createElement("link");
+                messages.setAttribute("as", "fetch");
+                messages.setAttribute("crossorigin", "anonymous");
+                messages.setAttribute("href", extensionResources.messages[locale]);
+                if (nonce) {
+                    messages.setAttribute("nonce", nonce);
+                }
+                messages.setAttribute("rel", "preload");
+                document.head.appendChild(messages);
+            }
+        });
 }
 
 export function createExtensionDefinition<T>(definitionTemplate: T, definition: T): T {

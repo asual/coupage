@@ -11,16 +11,12 @@ requires. The behavior of the CLI can be overriden by a local webpack.config.ts 
 ## Commands
 
 All commands can be used in the context of both applications and extensions. The package type detection relies on
-the fact that an application doesn't need a `peerDependencies` entry inside it's `package.json` while extensions do.
+the fact that an application doesn't require a `peerDependencies` entry inside it's `package.json` while extensions
+typically need it.
 
 ### `coupage build`
 
 Produces a production build of the package, bundle analysis and code coverage report.
-
-### `coupage intl`
-
-Extracts the default copy out of [react-intl](https://github.com/formatjs/formatjs/tree/main/packages/react-intl)
-message definitions and stores the result in `intl/en.json`.
 
 ### `coupage serve`
 

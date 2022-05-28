@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Rostislav Hristov
+ * Copyright (c) 2020-2022 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,12 @@
  * SOFTWARE.
  */
 
-/* eslint-disable no-console */
-
 import { resolve } from "path";
 
-import startDevServer from "@webpack-cli/serve/lib/startDevServer";
 import commandLineArgs from "command-line-args";
-import webpack, { Stats } from "webpack";
+import { sync } from "cross-spawn";
 
-import application from "./application";
-import extension from "./extension";
-import intl from "./intl";
-import { readFile } from "./util";
+import { readJsonFile } from "utils";
 
 const command = commandLineArgs(
     [
@@ -45,29 +39,17 @@ const command = commandLineArgs(
     }
 );
 
-const isExtension = readFile("package.json").peerDependencies;
+const isExtension = !!readJsonFile("package.json").peerDependencies;
 
 switch (command.name) {
-    case "build":
-        webpack(isExtension ? extension() : application(resolve()), (error?: Error, stats?: Stats) => {
-            if (error) {
-                console.error(error.message);
-                process.exit(1);
-            }
-            if (stats) {
-                if (stats.hasErrors()) {
-                    const errors = stats.toJson().errors as Error[];
-                    errors.forEach(({ message }) => {
-                        console.error(message);
-                    });
-                    process.exit(1);
-                }
-            }
-        });
+    case "build": {
+        process.env.COUPAGE_APPLICATION_PATH = isExtension ? "" : resolve();
+        process.env.COUPAGE_EXTENSION_PATH = isExtension ? resolve() : "";
+        process.env.NODE_ENV = "production";
+
+        import("scripts/build");
         break;
-    case "intl":
-        intl();
-        break;
+    }
     case "serve": {
         const args = commandLineArgs(
             [
@@ -76,13 +58,28 @@ switch (command.name) {
                     name: "application",
                     type: String,
                 },
+                {
+                    alias: "p",
+                    name: "production",
+                    type: Boolean,
+                },
             ],
             { argv: command._unknown || [] }
         );
-        if (isExtension) {
-            startDevServer(webpack(application(resolve(args.application), resolve())), [], [], console);
-        } else {
-            startDevServer(webpack(application(resolve())), [], [], console);
+
+        process.env.COUPAGE_APPLICATION_PATH = isExtension && args.application ? resolve(args.application) : resolve();
+        process.env.COUPAGE_EXTENSION_PATH = isExtension ? resolve() : "";
+        process.env.NODE_ENV = args.production ? "production" : "development";
+
+        const serve = require.resolve("@coupage/cli/scripts/serve", {
+            paths: [process.env.COUPAGE_APPLICATION_PATH],
+        });
+        const result = sync(process.execPath, [serve], { stdio: "inherit" });
+        if (result.signal) {
+            process.exit(1);
+        }
+        if (result.status) {
+            process.exit(result.status);
         }
         break;
     }

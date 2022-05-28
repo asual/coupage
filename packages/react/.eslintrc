@@ -8,7 +8,6 @@
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:import/errors",
         "plugin:import/typescript",
         "plugin:prettier/recommended",
         "plugin:react/recommended",
@@ -33,8 +32,9 @@
                 "pattern": "Copyright \\(c\\) \\d{4}(-\\d{4})? Rostislav Hristov"
             }
         ],
-        "import/no-cycle": "error",
+        "import/export": "error",
         "import/no-self-import": "error",
+        "import/no-unresolved": "error",
         "import/order": [
             "error",
             {

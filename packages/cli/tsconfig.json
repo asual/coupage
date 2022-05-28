@@ -2,6 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "alwaysStrict": true,
+        "baseUrl": "src",
         "declaration": true,
         "downlevelIteration": true,
         "esModuleInterop": true,
@@ -14,6 +15,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "outDir": "dist",
+        "paths": {
+            "*": ["*"]
+        },
+        "plugins": [{ "transform": "typescript-transform-paths", "exclude": ["**/node_modules/**"] }],
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,

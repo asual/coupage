@@ -3,14 +3,7 @@
     "author": "Rostislav Hristov <rostislav.hristov@gmail.com>",
     "license": "MIT",
     "private": true,
-    "scripts": {
-        "build": "lerna run build",
-        "clean": "lerna clean",
-        "package": "lerna run package",
-        "postinstall": "lerna bootstrap --hoist",
-        "publish": "lerna publish"
-    },
-    "devDependencies": {
-        "lerna": "^4.0.0"
-    }
+    "workspaces": [
+        "packages/*"
+    ]
 }

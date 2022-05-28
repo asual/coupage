@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Rostislav Hristov
+ * Copyright (c) 2020-2022 Rostislav Hristov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,30 +20,33 @@
  * SOFTWARE.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { EOL } from "os";
 import { resolve } from "path";
 
+import { transformSync } from "@swc-node/core";
 import { sync } from "glob";
-import tri, { Message } from "typescript-react-intl";
+import { addHook } from "pirates";
+import { Configuration } from "webpack";
 
-export default function () {
-    const value = sync("src/**/!(*.test).{ts,tsx}")
-        .reduce((acc, val) => [...acc, ...tri(readFileSync(val).toString())], [] as Message[])
-        .sort((a, b) => {
-            if (a.id < b.id) {
-                return -1;
-            }
-            if (a.id > b.id) {
-                return 1;
-            }
-            return 0;
-        })
-        .reduce((acc, val) => ({ ...acc, [val.id]: val.defaultMessage }), {});
+export function getConfiguration(path: string) {
+    const configurations = sync("webpack.config.*", {
+        cwd: path,
+    });
 
-    const outDir = "intl";
-    if (!existsSync(outDir)) {
-        mkdirSync(outDir);
+    if (configurations.length) {
+        addHook(
+            (code, filename) =>
+                transformSync(code, filename, {
+                    module: "commonjs",
+                }).code,
+            {
+                extension: ".ts",
+            }
+        );
+        return import(resolve(path, "webpack.config")).then((module) => {
+            const customConfiguration: Configuration = module.default;
+            return customConfiguration;
+        });
     }
-    writeFileSync(resolve(outDir, "en.json"), JSON.stringify(value, null, 4) + EOL);
+
+    return Promise.resolve<Configuration>({});
 }
