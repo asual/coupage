@@ -8,7 +8,7 @@
         "micro-frontend",
         "react"
     ],
-    "version": "0.1.2",
+    "version": "0.2.0",
     "author": "Rostislav Hristov <rostislav.hristov@gmail.com>",
     "license": "MIT",
     "repository": {
@@ -27,7 +27,7 @@
         "prepack": "npm run lint && npm run build"
     },
     "dependencies": {
-        "@coupage/core": "^0.1.2",
+        "@coupage/core": "^0.2.0",
         "react": "^18.1.0",
         "react-intl": "^6.0.4"
     },

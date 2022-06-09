@@ -1,3 +1,9 @@
+## 0.2.0 (Jun 6, 2022)
+
+-   Improve CLI implementation
+-   Upgrade dependencies
+-   Switch to an NPM workspace
+
 ## 0.1.2 (Mar 3, 2021)
 
 -   Improve the CLI support for extension development
