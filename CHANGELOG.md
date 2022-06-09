@@ -1,3 +1,7 @@
+## 0.2.1 (Jun 6, 2022)
+
+-   Fix CLI packaging
+
 ## 0.2.0 (Jun 6, 2022)
 
 -   Improve CLI implementation
