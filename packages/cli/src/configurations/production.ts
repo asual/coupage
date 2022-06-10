@@ -78,7 +78,6 @@ export function getConfiguration({ applicationPath, extensionPath }: Application
                                             tsx: true,
                                         },
                                     },
-                                    minify: true,
                                 },
                             },
                         ],
