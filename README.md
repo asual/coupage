@@ -12,6 +12,11 @@ Coupage provides a compact set of interfaces and build utilities that implement 
 Coupage offers a simple, yet flexible extensibility model that is capable of addressing the foundational requirements of
 a modern micro-frontend architecture.
 
+A sample application that showcases the current set of capabilities is available at
+https://coupage-react-sample-riuwn2qomq-uc.a.run.app ([Source Code](https://github.com/asual/coupage-react-sample),
+[Lighthouse Report](https://github.com/asual/coupage-react-sample/blob/master/reports/lighthouse.pdf) &
+[Snyk Report](https://github.com/asual/coupage-react-sample/blob/master/reports/snyk.pdf)).
+
 ## Concepts and Terminology
 
 Many software systems support some form of extensibility due to functional, organizational or ecosystem requirements.
@@ -55,8 +60,3 @@ packages.
 Coupage utilizes technologies like [Webpack](https://github.com/webpack/webpack) and
 [AMD](https://github.com/amdjs/amdjs-api) but this will very likely change as the ESM tooling support evolves. The core
 implementation is framework-agnostic and can provide support for other popular libraries besides React.
-
-## Sample
-
-A sample application that showcases the current set of capabilities is available in a
-[dedicated repository](https://github.com/asual/coupage-react-sample).
