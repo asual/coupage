@@ -1,3 +1,7 @@
+## 0.2.2 (Jun 10, 2022)
+
+-   Fix Webpack chunk names
+
 ## 0.2.1 (Jun 6, 2022)
 
 -   Fix CLI packaging
