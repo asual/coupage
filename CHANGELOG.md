@@ -1,3 +1,9 @@
+## 0.2.3 (Jun 18, 2022)
+
+-   Prioritize extension dependencies in development mode
+-   Improve CLI logging and process handling
+-   Upgrade dependencies
+
 ## 0.2.2 (Jun 10, 2022)
 
 -   Fix Webpack chunk names

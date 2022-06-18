@@ -37,12 +37,12 @@ import { getIntlMap, getCacheVersion, getExtensionName } from "utils";
 
 const DEFAULT_PORT = 3000;
 
-interface Params {
+interface ModeParams {
     applicationPath: string;
     extensionPath?: string;
 }
 
-export function getConfiguration({ applicationPath, extensionPath }: Params) {
+export function getConfigurations({ applicationPath, extensionPath }: ModeParams) {
     const intlMap = getIntlMap(applicationPath);
     const extensionName = extensionPath ? getExtensionName(extensionPath) : "";
 
@@ -108,7 +108,7 @@ export function getConfiguration({ applicationPath, extensionPath }: Params) {
                     patterns: [
                         {
                             context: "public",
-                            from: "**/*.{png,svg,txt,webmanifest,xml}",
+                            from: "**/*.{ico,png,svg,txt,webmanifest,xml}",
                             globOptions: {
                                 dot: false,
                             },
@@ -146,7 +146,6 @@ export function getConfiguration({ applicationPath, extensionPath }: Params) {
                     },
                 }),
                 new HtmlWebpackPlugin({
-                    favicon: resolve(applicationPath, "public", "favicon.ico"),
                     filename: "index.html",
                     inject: true,
                     template: resolve(applicationPath, "public", "index.html"),
@@ -154,19 +153,29 @@ export function getConfiguration({ applicationPath, extensionPath }: Params) {
             ],
             resolve: {
                 alias: {
+                    ...(extensionName && extensionPath
+                        ? {
+                              "webpack-dev-server/client": resolve(
+                                  applicationPath,
+                                  "node_modules",
+                                  "webpack-dev-server/client"
+                              ),
+                              "webpack/hot": resolve(applicationPath, "node_modules", "webpack/hot"),
+                          }
+                        : {}),
                     ...(extensionName && extensionPath ? { [extensionName]: resolve(extensionPath, "src") } : {}),
                 },
                 modules: [
-                    resolve(applicationPath, "src"),
-                    resolve(applicationPath, "node_modules"),
                     ...(extensionPath ? [resolve(extensionPath, "src")] : []),
                     ...(extensionPath ? [resolve(extensionPath, "node_modules")] : []),
+                    resolve(applicationPath, "src"),
+                    resolve(applicationPath, "node_modules"),
                     "node_modules",
                 ],
             },
             stats: "errors-warnings",
         };
 
-        return developmentConfiguration;
+        return [developmentConfiguration];
     });
 }

@@ -27,7 +27,7 @@ import { sync } from "glob";
 import { addHook } from "pirates";
 import { Configuration } from "webpack";
 
-export function getConfiguration(path: string) {
+export function getConfigurations(path: string) {
     const configurations = sync("webpack.config.*", {
         cwd: path,
     });
@@ -44,9 +44,9 @@ export function getConfiguration(path: string) {
         );
         return import(resolve(path, "webpack.config")).then((module) => {
             const customConfiguration: Configuration = module.default;
-            return customConfiguration;
+            return [customConfiguration];
         });
     }
 
-    return Promise.resolve<Configuration>({});
+    return Promise.resolve<[Configuration]>([{}]);
 }

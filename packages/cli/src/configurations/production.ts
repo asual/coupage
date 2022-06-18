@@ -49,7 +49,7 @@ interface ExtensionModeParams {
     extensionPath: string;
 }
 
-export function getConfiguration({ applicationPath, extensionPath }: ApplicationModeParams | ExtensionModeParams) {
+export function getConfigurations({ applicationPath, extensionPath }: ApplicationModeParams | ExtensionModeParams) {
     const path = extensionPath ?? applicationPath;
     const intlMap = getIntlMap(path);
 
@@ -136,7 +136,7 @@ export function getConfiguration({ applicationPath, extensionPath }: Application
                 ],
             };
 
-            return merge(productionConfiguration, extensionConfiguration);
+            return [merge(productionConfiguration, extensionConfiguration)];
         } else {
             const applicationConfiguration: Configuration = {
                 entry: sync("index.{ts,tsx}", {
@@ -151,7 +151,7 @@ export function getConfiguration({ applicationPath, extensionPath }: Application
                         patterns: [
                             {
                                 context: "public",
-                                from: "**/*.{png,svg,txt,webmanifest,xml}",
+                                from: "**/*.{ico,png,svg,txt,webmanifest,xml}",
                                 globOptions: {
                                     dot: false,
                                 },
@@ -174,7 +174,6 @@ export function getConfiguration({ applicationPath, extensionPath }: Application
                         ),
                     }),
                     new HtmlWebpackPlugin({
-                        favicon: "public/favicon.ico",
                         filename: "index.html",
                         inject: true,
                         minify: true,
@@ -186,7 +185,7 @@ export function getConfiguration({ applicationPath, extensionPath }: Application
                 ],
             };
 
-            return merge(productionConfiguration, applicationConfiguration);
+            return [merge(productionConfiguration, applicationConfiguration)];
         }
     });
 }

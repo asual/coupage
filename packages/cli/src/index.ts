@@ -78,9 +78,6 @@ switch (command.name) {
         if (result.signal) {
             process.exit(1);
         }
-        if (result.status) {
-            process.exit(result.status);
-        }
-        break;
+        process.exit(result.status ?? 0);
     }
 }

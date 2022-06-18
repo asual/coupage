@@ -28,17 +28,21 @@ const applicationPath = process.env.COUPAGE_APPLICATION_PATH ?? "";
 const extensionPath = process.env.COUPAGE_EXTENSION_PATH ?? "";
 
 Promise.all([
-    import("configurations/common").then(({ getConfiguration }) => getConfiguration(applicationPath || extensionPath)),
-    import("configurations/production").then(({ getConfiguration }) => {
+    import("configurations/common").then(({ getConfigurations }) =>
+        getConfigurations(applicationPath || extensionPath)
+    ),
+    import("configurations/production").then(({ getConfigurations }) => {
         if (applicationPath) {
-            return getConfiguration({ applicationPath });
+            return getConfigurations({ applicationPath });
         } else {
-            return getConfiguration({ extensionPath });
+            return getConfigurations({ extensionPath });
         }
     }),
-    import("configurations/custom").then(({ getConfiguration }) => getConfiguration(applicationPath || extensionPath)),
+    import("configurations/custom").then(({ getConfigurations }) =>
+        getConfigurations(applicationPath || extensionPath)
+    ),
 ]).then((configurations) => {
-    const configuration = merge(configurations);
+    const configuration = merge(configurations.flat());
     webpack(configuration, (error?: Error, stats?: Stats) => {
         if (error) {
             // eslint-disable-next-line no-console

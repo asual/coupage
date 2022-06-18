@@ -26,7 +26,7 @@ import { resolve } from "path";
 
 import { Configuration, EnvironmentPlugin } from "webpack";
 
-export function getConfiguration(path: string) {
+export function getConfigurations(path: string) {
     const commonConfiguration: Configuration = {
         context: path,
         devServer: {
@@ -45,7 +45,13 @@ export function getConfiguration(path: string) {
         },
         infrastructureLogging: {
             appendOnly: true,
-            console,
+            console: {
+                ...console,
+                info: (...args) => {
+                    // eslint-disable-next-line no-console
+                    console.info(args[0]?.replace(/^\[[^\]]+\]+ /, ""), ...args.slice(1));
+                },
+            },
             level: "info",
         },
         optimization: {
@@ -71,5 +77,5 @@ export function getConfiguration(path: string) {
             extensions: [".cjs", ".js", ".json", ".mjs", ".ts", ".tsx"],
         },
     };
-    return Promise.resolve(commonConfiguration);
+    return Promise.resolve([commonConfiguration]);
 }

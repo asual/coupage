@@ -29,18 +29,26 @@ const applicationPath = process.env.COUPAGE_APPLICATION_PATH ?? "";
 const extensionPath = process.env.COUPAGE_EXTENSION_PATH ?? "";
 
 Promise.all([
-    import("configurations/common").then(({ getConfiguration }) => getConfiguration(applicationPath)),
+    import("configurations/common").then(({ getConfigurations }) => getConfigurations(applicationPath)),
     process.env.NODE_ENV === "production"
-        ? import("configurations/production").then(({ getConfiguration }) =>
-              getConfiguration(extensionPath ? { extensionPath } : { applicationPath })
+        ? import("configurations/production").then(({ getConfigurations }) =>
+              getConfigurations(extensionPath ? { extensionPath } : { applicationPath })
           )
-        : import("configurations/development").then(({ getConfiguration }) =>
-              getConfiguration({ applicationPath, extensionPath })
+        : import("configurations/development").then(({ getConfigurations }) =>
+              getConfigurations({ applicationPath, extensionPath })
           ),
-    import("configurations/custom").then(({ getConfiguration }) => getConfiguration(applicationPath)),
+    import("configurations/custom").then(({ getConfigurations }) => getConfigurations(applicationPath)),
 ]).then((configurations) => {
-    const configuration = merge(configurations);
+    const configuration = merge(configurations.flat());
     const compiler = webpack(configuration);
+
     const server = new WebpackDevServer(configuration.devServer, compiler);
     server.start();
+
+    ["SIGINT", "SIGTERM"].forEach(function (sig) {
+        process.on(sig, function () {
+            server.close();
+            process.exit();
+        });
+    });
 });
