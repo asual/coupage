@@ -13,7 +13,7 @@ Coupage offers a simple, yet flexible extensibility model that is capable of add
 a modern micro-frontend architecture.
 
 A sample application that showcases the current set of capabilities is available at
-https://coupage-react-sample-riuwn2qomq-uc.a.run.app ([Source Code](https://github.com/asual/coupage-react-sample),
+https://coupage.asual.com ([Source Code](https://github.com/asual/coupage-react-sample),
 [Lighthouse Report](https://github.com/asual/coupage-react-sample/blob/master/reports/lighthouse.pdf) &
 [Snyk Report](https://github.com/asual/coupage-react-sample/blob/master/reports/snyk.pdf)).
 
