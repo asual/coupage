@@ -9,13 +9,18 @@ Coupage provides a compact set of interfaces and build utilities that implement 
 -   Built-in internationalization, performance and security
 -   Optimal development experience for extension authors
 
-Coupage offers a simple, yet flexible extensibility model that is capable of addressing the foundational requirements of
-a modern micro-frontend architecture.
+Coupage offers a simple, yet flexible extensibility integration model that is capable of addressing the foundational
+requirements of a modern micro-frontend architecture.
 
-A sample application that showcases the current set of capabilities is available at
-https://coupage.asual.com ([Source Code](https://github.com/asual/coupage-react-sample),
-[Lighthouse Report](https://github.com/asual/coupage-react-sample/blob/master/reports/lighthouse.pdf) &
-[Snyk Report](https://github.com/asual/coupage-react-sample/blob/master/reports/snyk.pdf)).
+> **Note**
+>
+> Check the [sample application](https://coupage.asual.com) that showcases the current set of Coupage capabilities.
+>
+> Source: [coupage-react-sample](https://github.com/asual/coupage-react-sample)\
+> Performance Report:
+> [coupage-react-sample/blob/master/reports/lighthouse.pdf](https://github.com/asual/coupage-react-sample/blob/master/reports/lighthouse.pdf)\
+> Security Report:
+> [coupage-react-sample/blob/master/reports/snyk.pdf](https://github.com/asual/coupage-react-sample/blob/master/reports/snyk.pdf)
 
 ## Concepts and Terminology
 
