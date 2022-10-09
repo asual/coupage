@@ -1,3 +1,8 @@
+## 0.2.4 (Oct 9, 2022)
+
+-   Separate language and locale
+-   Upgrade dependencies
+
 ## 0.2.3 (Jun 18, 2022)
 
 -   Prioritize extension dependencies in development mode
