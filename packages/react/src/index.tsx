@@ -44,6 +44,7 @@ import { IntlProvider, useIntl } from "react-intl";
 
 interface ExtensionContext {
     dependencies: Record<string, unknown>;
+    language?: string;
     nonce?: string;
     resources: Record<string, ExtensionResources>;
 }
@@ -92,7 +93,7 @@ export interface ExtensionPointProps<T> {
 
 export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, name, sort }: ExtensionPointProps<T>) {
     const { locale } = useIntl();
-    const { resources } = useContext(extensionContext);
+    const { language, resources } = useContext(extensionContext);
     const definitions = Object.keys(resources).reduce((acc: Record<string, T>, val) => {
         const definition = getExtensionDefinition<Record<string, T>>(val);
         if (!definition || !definition?.default[name]) {
@@ -112,17 +113,20 @@ export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, n
     }
     return (
         <Fragment>
-            {(sort ? keys.sort((a, b) => sort(definitions[a], definitions[b])) : keys).map((key) => (
-                <IntlProvider key={key} locale={locale} messages={getExtensionMessages(key, locale) || {}}>
-                    {createElement(
-                        extensionPointContext.Provider,
-                        {
-                            value: key,
-                        },
-                        children(definitions[key])
-                    )}
-                </IntlProvider>
-            ))}
+            {(sort ? keys.sort((a, b) => sort(definitions[a], definitions[b])) : keys).map((key) => {
+                const props = {
+                    value: key,
+                };
+                return (
+                    <IntlProvider
+                        key={key}
+                        locale={locale}
+                        messages={getExtensionMessages(key, language ?? locale) || {}}
+                    >
+                        {createElement(extensionPointContext.Provider, props, children(definitions[key]))}
+                    </IntlProvider>
+                );
+            })}
         </Fragment>
     );
 }
@@ -130,41 +134,34 @@ export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, n
 export interface ExtensionProviderProps {
     children: ReactElement | ReactElement[];
     dependencies: Record<string, unknown>;
+    language?: string;
     nonce?: string;
     resources: Record<string, ExtensionResources>;
 }
 
-export function ExtensionProvider({ children, dependencies, nonce, resources }: ExtensionProviderProps) {
+export function ExtensionProvider({ children, dependencies, language, nonce, resources }: ExtensionProviderProps) {
     const { locale } = useIntl();
+    const props = {
+        value: {
+            dependencies,
+            language,
+            nonce,
+            resources,
+        },
+    };
     return (
         <Suspense fallback={<Fragment />}>
             {createElement(
                 lazy<FunctionComponent<ProviderProps<ExtensionContext>>>(() =>
-                    loadResources(resources, dependencies, locale, nonce).then<
+                    loadResources(resources, dependencies, language ?? locale, nonce).then<
                         ExtensionModule<() => ReactElement<ProviderProps<ExtensionContext>>>
                     >(() => ({
                         default: function Provider() {
-                            return createElement(
-                                extensionContext.Provider,
-                                {
-                                    value: {
-                                        dependencies,
-                                        nonce,
-                                        resources,
-                                    },
-                                },
-                                children
-                            );
+                            return createElement(extensionContext.Provider, props, children);
                         },
                     }))
                 ),
-                {
-                    value: {
-                        dependencies,
-                        nonce,
-                        resources,
-                    },
-                },
+                props,
                 children
             )}
         </Suspense>

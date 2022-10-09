@@ -155,12 +155,12 @@ export function getConfigurations({ applicationPath, extensionPath }: ModeParams
                 alias: {
                     ...(extensionName && extensionPath
                         ? {
+                              "webpack/hot": resolve(applicationPath, "node_modules", "webpack/hot"),
                               "webpack-dev-server/client": resolve(
                                   applicationPath,
                                   "node_modules",
                                   "webpack-dev-server/client"
                               ),
-                              "webpack/hot": resolve(applicationPath, "node_modules", "webpack/hot"),
                           }
                         : {}),
                     ...(extensionName && extensionPath ? { [extensionName]: resolve(extensionPath, "src") } : {}),

@@ -36,8 +36,10 @@ const cache = {
     points: {} as Record<string, Record<string, ExtensionModule>>,
 };
 
-const loadMessages = (messages: Record<string, string>, locale: string) =>
-    fetch(messages[locale]).then<Record<string, string>>((data) => data.json());
+const loadMessages = (locale: string, messages?: Record<string, string>) =>
+    messages && messages[locale]
+        ? fetch(messages[locale]).then<Record<string, string>>((data) => data.json())
+        : Promise.resolve({});
 
 const loadScript = (
     extensionName: string,
@@ -48,10 +50,12 @@ const loadScript = (
 ) => {
     if (!window.define) {
         window.define = Object.assign(
-            (name: string, dependencyNames: string[], factory: (...args: unknown[]) => ExtensionModule) => {
-                window.define.callbacks[name](
+            (moduleName: string, dependencyNames: string[], factory: (...args: unknown[]) => ExtensionModule) => {
+                window.define.callbacks[moduleName](
                     factory(
-                        ...dependencyNames.map((dependencyName) => window.define.dependencies[name][dependencyName])
+                        ...dependencyNames.map(
+                            (dependencyName) => window.define.dependencies[moduleName][dependencyName]
+                        )
                     )
                 );
             },
@@ -150,7 +154,7 @@ export function loadResources(
                 process.env.EXTENSION_NAME === extensionName
                     ? import(`${process.env.EXTENSION_NAME}/definition`)
                     : loadScript(extensionName, "definition", extensionResources, dependencies, nonce),
-                extensionResources.messages ? loadMessages(extensionResources.messages, locale) : Promise.resolve({}),
+                loadMessages(locale, extensionResources.messages),
             ]).then(([definition, messages]) => {
                 cache.definitions[extensionName] = definition;
                 cache.messages[extensionName] = {
@@ -209,7 +213,7 @@ export function createExtensionPointDefinition<T>(): T {
     return {} as T;
 }
 
-export function extractExtensionPointNames<T>(definitionTemplate: T): Record<keyof T, string> {
+export function extractExtensionPointNames<T extends object>(definitionTemplate: T): Record<keyof T, string> {
     return Object.keys(definitionTemplate).reduce(
         (acc, val) => ({
             ...acc,

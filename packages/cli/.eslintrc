@@ -9,14 +9,15 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
-        "plugin:prettier/recommended"
+        "plugin:prettier/recommended",
+        "plugin:typescript-sort-keys/recommended"
     ],
     "ignorePatterns": ["bin", "dist", "node_modules"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "sourceType": "module"
     },
-    "plugins": ["header", "import", "prettier"],
+    "plugins": ["header", "import", "prettier", "typescript-sort-keys"],
     "rules": {
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -55,7 +56,14 @@
         "no-console": "error",
         "no-shadow": "error",
         "no-tabs": "error",
-        "sort-keys": "error"
+        "sort-keys": [
+            "warn",
+            "asc",
+            {
+                "allowLineSeparatedGroups": true,
+                "natural": true
+            }
+        ]
     },
     "settings": {
         "import/resolver": {
