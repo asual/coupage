@@ -60,6 +60,7 @@
         "no-console": "error",
         "no-shadow": "error",
         "no-tabs": "error",
+        "react/jsx-sort-props": "error",
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "react-hooks/exhaustive-deps": "error",

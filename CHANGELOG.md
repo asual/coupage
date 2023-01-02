@@ -1,3 +1,7 @@
+## 0.2.5 (Jan 9, 2023)
+
+-   Upgrade dependencies
+
 ## 0.2.4 (Oct 9, 2022)
 
 -   Separate language and locale
