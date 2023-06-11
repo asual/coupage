@@ -1,3 +1,7 @@
+## 0.2.6 (June 11, 2023)
+
+-   Upgrade dependencies
+
 ## 0.2.5 (Jan 9, 2023)
 
 -   Upgrade dependencies
