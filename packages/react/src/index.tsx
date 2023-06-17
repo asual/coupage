@@ -79,14 +79,14 @@ export function ExtensionComponent({ fallback = <Fragment />, name }: ExtensionC
 }
 
 export interface ExtensionPointProps<T> {
-    children: (props: T) => ReactElement;
+    element: (props: T) => ReactElement;
     fallback?: ReactElement;
     filter?: (definition: T) => boolean;
     name: string;
     sort?: (a: T, b: T) => number;
 }
 
-export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, name, sort }: ExtensionPointProps<T>) {
+export function ExtensionPoint<T>({ element, fallback = <Fragment />, filter, name, sort }: ExtensionPointProps<T>) {
     const { locale } = useIntl();
     const { language, resources } = useContext(extensionContext);
     const definitions = Object.keys(resources).reduce((acc: Record<string, T>, val) => {
@@ -109,6 +109,7 @@ export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, n
     return (
         <Fragment>
             {(sort ? keys.sort((a, b) => sort(definitions[a], definitions[b])) : keys).map((key) => {
+                const children = element(definitions[key]);
                 const props = {
                     value: key,
                 };
@@ -118,7 +119,7 @@ export function ExtensionPoint<T>({ children, fallback = <Fragment />, filter, n
                         locale={locale}
                         messages={getExtensionMessages(key, language ?? locale) || {}}
                     >
-                        {createElement(extensionPointContext.Provider, props, children(definitions[key]))}
+                        {createElement(extensionPointContext.Provider, props, children)}
                     </IntlProvider>
                 );
             })}
