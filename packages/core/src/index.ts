@@ -158,12 +158,14 @@ export function loadResources(
                 };
             });
         })
-    ).then(() => {
-        void 0;
-    });
+    ).then(() => void 0);
 }
 
-export function preloadResources(resources: Record<string, ExtensionResources>, locale: string, nonce?: string): void {
+export function preloadResources(
+    resources: Record<string, ExtensionResources>,
+    language: string,
+    nonce?: string
+): void {
     Object.keys(resources)
         .filter(
             (extensionName) =>
@@ -187,7 +189,7 @@ export function preloadResources(resources: Record<string, ExtensionResources>, 
                 const messages = document.createElement("link");
                 messages.setAttribute("as", "fetch");
                 messages.setAttribute("crossorigin", "anonymous");
-                messages.setAttribute("href", extensionResources.messages[locale]);
+                messages.setAttribute("href", extensionResources.messages[language]);
                 if (nonce) {
                     messages.setAttribute("nonce", nonce);
                 }
