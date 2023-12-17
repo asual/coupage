@@ -8,7 +8,7 @@
         "micro-frontend",
         "react"
     ],
-    "version": "0.2.6",
+    "version": "0.2.7",
     "author": "Rostislav Hristov <rostislav.hristov@gmail.com>",
     "license": "MIT",
     "repository": {
@@ -27,26 +27,26 @@
         "prepack": "npm run lint && npm run build"
     },
     "dependencies": {
-        "@coupage/core": "^0.2.6",
+        "@coupage/core": "^0.2.7",
         "react": "^18.2.0",
         "react-intl": "^6.5.5"
     },
     "devDependencies": {
         "@testing-library/react": "^14.1.2",
-        "@types/react": "^18.2.41",
-        "@typescript-eslint/eslint-plugin": "^6.13.1",
-        "@typescript-eslint/parser": "^6.13.1",
-        "eslint": "^8.55.0",
+        "@types/react": "^18.2.45",
+        "@typescript-eslint/eslint-plugin": "^6.14.0",
+        "@typescript-eslint/parser": "^6.14.0",
+        "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-header": "^3.1.1",
-        "eslint-plugin-import": "^2.29.0",
+        "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-react": "^7.33.2",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-testing-library": "^6.2.0",
         "eslint-plugin-typescript-sort-keys": "^3.1.0",
         "prettier": "^3.1.0",
-        "typescript": "^5.3.2"
+        "typescript": "^5.3.3"
     },
     "peerDependencies": {
         "react": "^18.2.0",

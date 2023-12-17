@@ -1,4 +1,9 @@
-## 0.2.6 (June 11, 2023)
+## 0.2.7 (Dec 17, 2023)
+
+-   Rename props
+-   Upgrade dependencies
+
+## 0.2.6 (Jun 11, 2023)
 
 -   Upgrade dependencies
 
